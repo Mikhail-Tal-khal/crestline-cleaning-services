@@ -1,0 +1,160 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    overflow-x: clip;
+  }
+
+  body {
+    @apply bg-soft font-sans text-charcoal antialiased dark:bg-charcoal dark:text-silver;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    @apply bg-bright/30 text-navy dark:text-white;
+  }
+
+  /* iOS-style soft blue focus glow — always visible for keyboard users. */
+  :focus-visible {
+    outline: 2px solid theme(colors.bright.DEFAULT);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 5px rgba(39, 169, 245, 0.22);
+    border-radius: 10px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .container-site {
+    @apply mx-auto w-full max-w-content px-5 sm:px-8;
+  }
+
+  /* Skip link — visually hidden until focused with the keyboard. */
+  .skip-link {
+    @apply sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-bright focus:px-4 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-navy;
+  }
+
+  /* iOS inset text fields: borderless soft-grey wells, calm focus. */
+  .field-input {
+    @apply w-full rounded-[14px] bg-soft px-4 pt-6 pb-2 text-[16px] leading-6 text-charcoal shadow-none transition-all duration-150 placeholder:text-transparent hover:bg-soft/70 focus:bg-white dark:bg-white/[0.07] dark:text-white dark:hover:bg-white/[0.09] dark:focus:bg-white/[0.12];
+  }
+  .field-input:focus {
+    @apply outline-none ring-2 ring-bright/60;
+  }
+  .field-input[aria-invalid="true"] {
+    @apply ring-2 ring-red-500/70;
+  }
+
+  /* Static-label variant (selects, dates). */
+  .field-static {
+    @apply w-full appearance-none rounded-[14px] bg-soft px-4 py-3 text-[16px] leading-6 text-charcoal transition-all duration-150 hover:bg-soft/70 focus:bg-white dark:bg-white/[0.07] dark:text-white dark:[&>option]:text-charcoal dark:focus:bg-white/[0.12];
+  }
+  .field-static:focus {
+    @apply outline-none ring-2 ring-bright/60;
+  }
+  .field-static[aria-invalid="true"] {
+    @apply ring-2 ring-red-500/70;
+  }
+
+  .field-label {
+    @apply block text-[13px] font-semibold text-charcoal dark:text-silver;
+  }
+
+  .field-hint {
+    @apply mt-1 text-[13px] leading-5 text-slate-500 dark:text-silver/80;
+  }
+
+  .field-error {
+    @apply mt-1.5 flex items-start gap-1.5 text-[13px] font-medium leading-5 text-red-600 dark:text-red-400;
+  }
+
+  /* Hairline dividers (0.5px, soft grey). */
+  .hairline-b {
+    box-shadow: 0 0.5px 0 rgba(16, 24, 40, 0.12);
+  }
+  .dark .hairline-b {
+    box-shadow: 0 0.5px 0 rgba(255, 255, 255, 0.14);
+  }
+  .hairline-t {
+    box-shadow: 0 -0.5px 0 rgba(16, 24, 40, 0.12);
+  }
+  .dark .hairline-t {
+    box-shadow: 0 -0.5px 0 rgba(255, 255, 255, 0.14);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .pb-tab-safe {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 6rem);
+  }
+  @media (min-width: 768px) {
+    .pb-tab-safe {
+      padding-bottom: 0;
+    }
+  }
+  .bottom-tab-safe {
+    bottom: calc(env(safe-area-inset-bottom) + 1rem);
+  }
+}
+
+/* One-time metallic shimmer sweep for the logo (runs once, then rests). */
+.logo-shimmer {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+}
+.logo-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-130%) skewX(-18deg);
+  background: linear-gradient(
+    100deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.45) 48%,
+    rgba(255, 255, 255, 0.12) 58%,
+    transparent 70%
+  );
+  animation: logo-shimmer-sweep 1.2s ease-in-out 0.8s 1 both;
+  pointer-events: none;
+}
+@keyframes logo-shimmer-sweep {
+  to {
+    transform: translateX(160%) skewX(-18deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .logo-shimmer::after {
+    animation: none;
+  }
+}
+
+/* Gentle rise used only as a no-JS/reduced-motion-safe fallback. */
+@keyframes soft-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
