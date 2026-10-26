@@ -43,7 +43,7 @@ export default function SiteFooter({ logo }: { logo: BrandAsset }) {
                   <img
                     src="/brand/crestline-logo.png"
                     alt="Crestline Cleaning Services"
-                    className="h-12 w-auto"
+                    className="h-12 w-auto rounded-[10px]"
                   />
                 </span>
               ) : (

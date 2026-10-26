@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import type { FormActionResult } from "@/app/actions";
+import { siteConfig } from "@/lib/siteConfig";
 import { whatsappLink } from "@/components/social-buttons";
 import { Button } from "@/components/ui/button";
 import { AlertIcon, InfoIcon, SendIcon, WhatsAppGlyph } from "@/components/icons";
@@ -116,10 +117,10 @@ export default function FormOutcome({
         <p className="mt-3 max-w-xl text-[15px] leading-7 text-slate-600 dark:text-silver/90">
           Your email app will open with the request addressed to{" "}
           <a
-            href={`mailto:cleaning.services.crestline@gmail.com`}
+            href={`mailto:${siteConfig.email}`}
             className="font-medium text-royal underline underline-offset-4 dark:text-bright"
           >
-            cleaning.services.crestline@gmail.com
+            {siteConfig.email}
           </a>
           . If you selected photos or a video, please attach them to that email.
         </p>

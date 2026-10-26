@@ -13,12 +13,12 @@ import { MailIcon, MapPinIcon, PhoneIcon, WhatsAppGlyph } from "@/components/ico
 export const metadata: Metadata = {
   title: "Contact Crestline Cleaning Services — Mombasa, Kenya",
   description:
-    "Contact Crestline Cleaning Services in Mombasa, Kenya. Email cleaning.services.crestline@gmail.com or send a message — serving customers across Mombasa and surrounding locations by quotation.",
+    "Contact Crestline Cleaning Services in Mombasa, Kenya. Email cleaningservices.crestline@gmail.com or send a message — serving customers across Mombasa and surrounding locations by quotation.",
   alternates: { canonical: "/contact" },
   openGraph: {
     title: "Contact Crestline Cleaning Services",
     description:
-      "Serving customers across Mombasa, Kenya. Email cleaning.services.crestline@gmail.com.",
+      "Serving customers across Mombasa, Kenya. Email cleaningservices.crestline@gmail.com.",
     url: "/contact",
   },
 };
@@ -66,7 +66,7 @@ export default function ContactPage() {
               />
               {siteConfig.phone && (
                 <InsetRow
-                  href={`tel:${siteConfig.phone}`}
+                  href={`tel:${siteConfig.phone.replace(/\s+/g, "")}`}
                   icon={<PhoneIcon className="h-5 w-5" />}
                   title={siteConfig.phone}
                   subtitle="Call or SMS."

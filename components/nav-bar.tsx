@@ -45,7 +45,7 @@ export default function NavBar({ hasLogo }: { hasLogo: boolean }) {
               <img
                 src="/brand/crestline-logo.png"
                 alt="Crestline Cleaning Services"
-                className="h-11 w-auto sm:h-12"
+                className="h-11 w-auto rounded-[10px] sm:h-12"
               />
             </span>
           ) : (

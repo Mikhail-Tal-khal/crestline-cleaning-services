@@ -44,17 +44,17 @@ export default function UniformCarousel({ slides }: { slides: UniformSlide[] }) 
             aria-label={`Official Crestline uniform design — ${side} view`}
           >
             {exists ? (
-              <div className="relative aspect-[3/4] overflow-hidden rounded-[24px] border-[0.5px] border-white/20 shadow-frame">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-[24px] border-[0.5px] border-white/20 bg-white p-4 shadow-frame">
                 {/* Plain <img>: official files render at their own framing. */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={`/brand/crestline-uniform-${side}.png`}
                   alt={`Official Crestline cleaning uniform design — ${side} view`}
-                  className="h-full w-full object-cover object-top"
+                  className="h-full w-full object-contain"
                 />
               </div>
             ) : (
-              <div className="flex aspect-[3/4] flex-col items-center justify-center gap-4 rounded-[24px] border-[0.5px] border-dashed border-silver/40 bg-white/[0.06] p-6 text-center">
+              <div className="flex aspect-[4/5] flex-col items-center justify-center gap-4 rounded-[24px] border-[0.5px] border-dashed border-silver/40 bg-white/[0.06] p-6 text-center">
                 <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-silver">
                   <HangerIcon className="h-6 w-6" />
                 </span>

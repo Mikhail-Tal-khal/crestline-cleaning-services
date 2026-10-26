@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { submitQuoteRequest, type FormActionResult } from "@/app/actions";
+import { siteConfig } from "@/lib/siteConfig";
 import { services, type ServiceId } from "@/lib/services";
 import { mattressSizes, type MattressSizeId } from "@/lib/pricing";
 import { photoLimits, videoLimits } from "@/lib/validation";
@@ -1032,10 +1033,10 @@ export default function QuoteForm({ seed }: { seed?: Seed }) {
           This form needs JavaScript to run. Without it, please email your request
           directly to{" "}
           <a
-            href="mailto:cleaning.services.crestline@gmail.com"
+            href={`mailto:${siteConfig.email}`}
             className="font-medium text-royal underline underline-offset-4 dark:text-bright"
           >
-            cleaning.services.crestline@gmail.com
+            {siteConfig.email}
           </a>
           .
         </p>

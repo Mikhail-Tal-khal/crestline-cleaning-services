@@ -94,7 +94,7 @@ sending.
   **only** when delivery genuinely succeeded.
 
 - **Without configuration** — the site never pretends an email was sent. The
-  visitor gets a prepared `mailto:` link to `cleaning.services.crestline@gmail.com`
+  visitor gets a prepared `mailto:` link to `cleaningservices.crestline@gmail.com`
   (plus a "copy summary" button) and is told the email app will open.
 
 - **Files**: photos (max 6 × 5 MB, JPG/PNG/WebP) and one video (max 20 MB,
@@ -118,9 +118,10 @@ sending.
 Phone, WhatsApp and social buttons **stay hidden / "Coming soon"** automatically
 until real values are set in `lib/siteConfig.ts`.
 
-### Official brand assets (drop-in)
+### Official brand assets
 
-Copy the original files into `public/brand/`:
+The official files are already in `public/brand/` (added October 2026). To
+replace them, drop new files with the same names:
 
 ```
 image(8).png  →  public/brand/crestline-logo.png          (official silver emblem)

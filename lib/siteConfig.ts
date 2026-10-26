@@ -12,25 +12,31 @@ export const siteConfig = {
   parentCompany: "Crestline Strategies Limited",
   parentLine: "A division of Crestline Strategies Limited",
   tagline: "Cleaner Spaces, Healthier Environments.",
-  email: "cleaning.services.crestline@gmail.com",
+  email: "cleaningservices.crestline@gmail.com",
   website: "www.crestlinestrategies.co.ke",
   siteUrl: "https://www.crestlinestrategies.co.ke",
   location: "Mombasa, Kenya",
   serviceArea: "Mombasa and surrounding locations by quotation",
 
-  /** Phone number — hidden everywhere until a real value is added. */
-  phone: "",
+  /** Phone number — shown across the site (tel links strip spaces). */
+  phone: "+254 180 831835",
 
   /** Social channels — add real values and the buttons go live by themselves. */
   social: {
     /** International format, e.g. "2547XXXXXXXX". Empty = WhatsApp stays hidden. */
     whatsapp: {
-      number: "",
+      number: "254180831835",
       prefilledMessage: "Hi Crestline, I'd like a quote for...",
     },
-    instagram: { url: "", handle: "" },
+    instagram: {
+      url: "https://www.instagram.com/crestlinecleaningke/",
+      handle: "crestlinecleaningke",
+    },
     facebook: { url: "" },
-    tiktok: { url: "", handle: "" },
+    tiktok: {
+      url: "https://www.tiktok.com/@crestlinecleaningke",
+      handle: "crestlinecleaningke",
+    },
   },
 };
 

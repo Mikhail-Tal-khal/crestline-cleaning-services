@@ -63,17 +63,17 @@ export default function AboutPage() {
 
           <Reveal delay={120}>
             <div className="relative">
-              <div className="relative aspect-[4/3] overflow-hidden rounded-[26px] shadow-frame">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-[26px] bg-white p-4 shadow-frame dark:bg-white/[0.06]">
                 <Image
-                  src="/images/team-preparing.jpg"
-                  alt="Two Crestline-style cleaning professionals in royal-blue uniforms preparing equipment, seen from behind"
+                  src="/brand/crestline-uniform-front.png"
+                  alt="Official Crestline cleaning uniform — front view"
                   fill
                   sizes="(min-width: 1024px) 45vw, 100vw"
-                  className="object-cover"
+                  className="object-contain"
                 />
               </div>
               <p className="mt-3 text-[12px] font-semibold uppercase tracking-[0.12em] text-slate-400 dark:text-silver/60">
-                Illustrative service imagery
+                Official Crestline uniform design
               </p>
             </div>
           </Reveal>
