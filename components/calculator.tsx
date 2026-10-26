@@ -5,27 +5,31 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   calculateEstimate,
   commercialOptions,
-  estimateToSearchParams,
   emptyMattresses,
+  estimateToSearchParams,
   type CommercialServiceId,
   type EstimateInput,
 } from "@/lib/quote";
-import { houseCleaningTiers, mattressSizes, type MattressSizeId } from "@/lib/pricing";
+import { carpetSizes, houseCleaningTiers, mattressSizes, type MattressSizeId } from "@/lib/pricing";
+import { ksh } from "@/lib/format";
 import Stepper from "@/components/ui/stepper";
 import { Switch } from "@/components/ui/switch";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { ButtonLink } from "@/components/ui/button";
 import RollingNumber from "@/components/rolling-number";
-import { cn } from "@/lib/cn";
 
 type CalcState = {
   sofaOn: boolean;
   sofaSeats: number;
+  leatherOn: boolean;
+  leatherSeats: number;
+  chairsOn: boolean;
+  chairCount: number;
   mattressesOn: boolean;
   mattresses: Record<MattressSizeId, number>;
-  carpetOn: boolean;
-  carpetLength: string;
-  carpetWidth: string;
+  carpetsOn: boolean;
+  carpetMedium: number;
+  carpetLarge: number;
   cleaningType: "none" | "standard" | "deep";
   bedrooms: number;
   commercial: CommercialServiceId;
@@ -35,11 +39,15 @@ type CalcState = {
 const initialState: CalcState = {
   sofaOn: false,
   sofaSeats: 1,
+  leatherOn: false,
+  leatherSeats: 1,
+  chairsOn: false,
+  chairCount: 1,
   mattressesOn: false,
   mattresses: { ...emptyMattresses },
-  carpetOn: false,
-  carpetLength: "",
-  carpetWidth: "",
+  carpetsOn: false,
+  carpetMedium: 1,
+  carpetLarge: 0,
   cleaningType: "none",
   bedrooms: 2,
   commercial: "none",
@@ -47,27 +55,20 @@ const initialState: CalcState = {
 };
 
 function toInput(state: CalcState): EstimateInput {
-  const length = Number.parseFloat(state.carpetLength);
-  const width = Number.parseFloat(state.carpetWidth);
   const area = Number.parseFloat(state.postConstructionArea);
   return {
     sofaSeats: state.sofaOn ? state.sofaSeats : 0,
+    leatherSeats: state.leatherOn ? state.leatherSeats : 0,
+    chairCount: state.chairsOn ? state.chairCount : 0,
     mattresses: state.mattressesOn ? state.mattresses : { ...emptyMattresses },
-    carpetLength: state.carpetOn && Number.isFinite(length) ? length : 0,
-    carpetWidth: state.carpetOn && Number.isFinite(width) ? width : 0,
+    carpetMedium: state.carpetsOn ? state.carpetMedium : 0,
+    carpetLarge: state.carpetsOn ? state.carpetLarge : 0,
     bedrooms: state.cleaningType === "none" ? 0 : state.bedrooms,
     cleaningType: state.cleaningType,
     commercial: state.commercial,
     postConstructionArea:
       state.commercial === "post-construction" && Number.isFinite(area) ? area : 0,
   };
-}
-
-function parseDecimal(value: string, max: number): number {
-  const cleaned = value.replace(/[^0-9.]/g, "");
-  const parsed = Number.parseFloat(cleaned);
-  if (!Number.isFinite(parsed) || parsed < 0) return 0;
-  return Math.min(max, Math.round(parsed * 100) / 100);
 }
 
 /**
@@ -84,10 +85,15 @@ export default function QuoteCalculator() {
   const estimate = useMemo(() => calculateEstimate(input), [input]);
   const quoteHref = `/request-a-quote?${estimateToSearchParams(input)}`;
 
-  const mattressTotal = mattressSizes.reduce(
-    (sum, size) => sum + state.mattresses[size.id],
-    0
-  );
+  const mattressTotal = mattressSizes.reduce((sum, size) => sum + state.mattresses[size.id], 0);
+
+  const expand = {
+    initial: { height: 0, opacity: 0 },
+    animate: { height: "auto", opacity: 1 },
+    exit: { height: 0, opacity: 0 },
+    transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] as const },
+    className: "overflow-hidden",
+  };
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1.15fr_1fr]">
@@ -101,10 +107,10 @@ export default function QuoteCalculator() {
             Fabric services
           </h3>
           <div className="mt-4 divide-y divide-navy/[0.06] dark:divide-white/[0.08]">
-            {/* Sofa */}
+            {/* Standard sofa */}
             <div className="py-4">
               <Switch
-                label="Sofa cleaning"
+                label="Sofa cleaning (standard fabric)"
                 checked={state.sofaOn}
                 onChange={(on) => {
                   if (on && state.sofaSeats < 1) update("sofaSeats", 1);
@@ -113,13 +119,7 @@ export default function QuoteCalculator() {
               />
               <AnimatePresence initial={false}>
                 {state.sofaOn && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                    className="overflow-hidden"
-                  >
+                  <motion.div {...expand}>
                     <div className="pt-4">
                       <Stepper
                         label="Sofa seats"
@@ -127,7 +127,63 @@ export default function QuoteCalculator() {
                         onChange={(v) => update("sofaSeats", v)}
                         min={1}
                         max={30}
-                        hint="Standard seat equivalents at KSh 600 each"
+                        hint="KSh 500 per seat"
+                      />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Leather */}
+            <div className="py-4">
+              <Switch
+                label="Leather sofa or couch set"
+                checked={state.leatherOn}
+                onChange={(on) => {
+                  if (on && state.leatherSeats < 1) update("leatherSeats", 1);
+                  update("leatherOn", on);
+                }}
+              />
+              <AnimatePresence initial={false}>
+                {state.leatherOn && (
+                  <motion.div {...expand}>
+                    <div className="pt-4">
+                      <Stepper
+                        label="Leather seats"
+                        value={state.leatherSeats}
+                        onChange={(v) => update("leatherSeats", v)}
+                        min={1}
+                        max={30}
+                        hint="KSh 550 per seat"
+                      />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Chairs */}
+            <div className="py-4">
+              <Switch
+                label="Dining or office chairs"
+                checked={state.chairsOn}
+                onChange={(on) => {
+                  if (on && state.chairCount < 1) update("chairCount", 1);
+                  update("chairsOn", on);
+                }}
+              />
+              <AnimatePresence initial={false}>
+                {state.chairsOn && (
+                  <motion.div {...expand}>
+                    <div className="pt-4">
+                      <Stepper
+                        label="Chairs"
+                        value={state.chairCount}
+                        onChange={(v) => update("chairCount", v)}
+                        min={1}
+                        max={40}
+                        hint="KSh 450 per chair"
                       />
                     </div>
                   </motion.div>
@@ -142,20 +198,14 @@ export default function QuoteCalculator() {
                 checked={state.mattressesOn}
                 onChange={(on) => {
                   if (on && mattressTotal === 0) {
-                    update("mattresses", { ...state.mattresses, single: 1 });
+                    update("mattresses", { ...state.mattresses, "3x6": 1 });
                   }
                   update("mattressesOn", on);
                 }}
               />
               <AnimatePresence initial={false}>
                 {state.mattressesOn && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                    className="overflow-hidden"
-                  >
+                  <motion.div {...expand}>
                     <div className="grid gap-4 pt-4 sm:grid-cols-2">
                       {mattressSizes.map((size) => (
                         <Stepper
@@ -166,7 +216,7 @@ export default function QuoteCalculator() {
                             update("mattresses", { ...state.mattresses, [size.id]: v })
                           }
                           max={20}
-                          hint="One face plus edges"
+                          hint={ksh(size.price)}
                         />
                       ))}
                     </div>
@@ -175,53 +225,32 @@ export default function QuoteCalculator() {
               </AnimatePresence>
             </div>
 
-            {/* Carpet */}
+            {/* Carpets */}
             <div className="py-4">
               <Switch
                 label="Carpet or rug cleaning"
-                checked={state.carpetOn}
-                onChange={(on) => update("carpetOn", on)}
+                checked={state.carpetsOn}
+                onChange={(on) => update("carpetsOn", on)}
               />
               <AnimatePresence initial={false}>
-                {state.carpetOn && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                    className="overflow-hidden"
-                  >
+                {state.carpetsOn && (
+                  <motion.div {...expand}>
                     <div className="grid gap-4 pt-4 sm:grid-cols-2">
-                      <div>
-                        <label htmlFor="calc-carpet-length" className="field-label">
-                          Length (m)
-                        </label>
-                        <input
-                          id="calc-carpet-length"
-                          inputMode="decimal"
-                          value={state.carpetLength}
-                          onChange={(e) => update("carpetLength", e.target.value)}
-                          placeholder="e.g. 3"
-                          className="field-input mt-1.5"
+                      {carpetSizes.map((size) => (
+                        <Stepper
+                          key={size.id}
+                          label={size.label}
+                          value={
+                            size.id === "medium" ? state.carpetMedium : state.carpetLarge
+                          }
+                          onChange={(v) =>
+                            update(size.id === "medium" ? "carpetMedium" : "carpetLarge", v)
+                          }
+                          max={20}
+                          hint={`${ksh(size.price)} · ${size.detail}`}
                         />
-                      </div>
-                      <div>
-                        <label htmlFor="calc-carpet-width" className="field-label">
-                          Width (m)
-                        </label>
-                        <input
-                          id="calc-carpet-width"
-                          inputMode="decimal"
-                          value={state.carpetWidth}
-                          onChange={(e) => update("carpetWidth", e.target.value)}
-                          placeholder="e.g. 2"
-                          className="field-input mt-1.5"
-                        />
-                      </div>
+                      ))}
                     </div>
-                    <p className="mt-2.5 text-[13px] leading-5 text-slate-500 dark:text-silver/80">
-                      Standard fabric at KSh 250 per m² · minimum charge KSh 1,500.
-                    </p>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -390,27 +419,10 @@ function EstimatePanel({
                     )}
                   </div>
                   <p className="whitespace-nowrap font-sans text-sm font-bold tabular-nums text-silver">
-                    {line.amount === null ? "Quotation" : `KSh ${line.amount.toLocaleString("en-US")}`}
+                    {line.amount === null ? "Quotation" : ksh(line.amount)}
                   </p>
                 </motion.li>
               ))}
-              {estimate.minimumAdjustment && (
-                <motion.li
-                  key="min"
-                  layout
-                  initial={{ opacity: 0, y: -8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="flex items-start justify-between gap-4 py-3"
-                >
-                  <p className="text-sm leading-5 text-silver/80">
-                    {estimate.minimumAdjustment.label}
-                  </p>
-                  <p className="whitespace-nowrap font-sans text-sm font-bold tabular-nums text-silver">
-                    {`KSh ${estimate.minimumAdjustment.amount.toLocaleString("en-US")}`}
-                  </p>
-                </motion.li>
-              )}
             </AnimatePresence>
           </ul>
 
@@ -426,8 +438,7 @@ function EstimatePanel({
               >
                 <span>{estimate.discount.label}</span>
                 <span className="whitespace-nowrap font-sans font-bold tabular-nums">
-                  −
-                  {`KSh ${estimate.discount.amount.toLocaleString("en-US")}`}
+                  −{ksh(estimate.discount.amount)}
                 </span>
               </motion.p>
             )}
@@ -447,9 +458,7 @@ function EstimatePanel({
             ) : (
               <p className="text-sm leading-6 text-silver">
                 Some items are priced by written quotation. The services above total{" "}
-                <strong className="font-semibold text-white">
-                  {`KSh ${estimate.subtotal.toLocaleString("en-US")}`}
-                </strong>{" "}
+                <strong className="font-semibold text-white">{ksh(estimate.subtotal)}</strong>{" "}
                 before those.
               </p>
             )}

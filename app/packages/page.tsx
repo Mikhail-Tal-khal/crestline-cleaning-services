@@ -10,7 +10,7 @@ import { InfoIcon } from "@/components/icons";
 export const metadata: Metadata = {
   title: "Packages and Prices — Cleaning Rates in Mombasa",
   description:
-    "Crestline cleaning prices in Mombasa: sofa cleaning from KSh 600 per seat, carpets from KSh 250 per m², house cleaning from KSh 2,800 and fabric packages with up to 12% off. Estimate your quote online.",
+    "Crestline cleaning prices in Mombasa: sofa cleaning from KSh 500 per seat, leather from KSh 550, mattresses from KSh 1,700, rugs from KSh 1,000 and house cleaning from KSh 2,800. Estimate your quote online.",
   alternates: { canonical: "/packages" },
   openGraph: {
     title: "Packages and Prices — Crestline Cleaning Services",

@@ -2,7 +2,7 @@
 export const faqs = [
   {
     q: "How is sofa cleaning priced?",
-    a: "We charge KSh 600 per standard seat equivalent, and any standalone extraction visit has a minimum of KSh 1,800. Every sofa is a little different, so shape, construction and condition can shift the seat count slightly — we confirm it with you before booking, never after.",
+    a: "Standard fabric sofas are KSh 500 per seat, leather sofas and couch sets are KSh 550 per seat, and dining or office chairs are KSh 450 each. Every sofa is a little different, so shape and condition can shift the seat count slightly — we confirm it with you before booking, never after.",
   },
   {
     q: "Can I combine two separate sofas?",
@@ -10,11 +10,11 @@ export const faqs = [
   },
   {
     q: "Do you clean 6-seater and 10-seater sofas?",
-    a: "We do. As a guide, a 6-seater is KSh 3,600 and a 10-seater is KSh 6,000. If your sofa has an unusual shape or build, send us a photo and we'll confirm the count before we book you in.",
+    a: "We do. At KSh 500 a seat, a 6-seater works out to KSh 3,000 and a 10-seater to KSh 5,000. If your sofa has an unusual shape or build, send us a photo and we'll confirm the count before we book you in.",
   },
   {
     q: "How is carpet cleaning measured?",
-    a: "Length times width, in square metres. Standard fabric carpet is KSh 250 per m², with a KSh 1,500 minimum. Specialty rugs and delicate fibres get their own individual assessment.",
+    a: "We price rugs by size: a medium rug is KSh 1,000 and a large rug is KSh 1,500. Unusually shaped, oversized or delicate rugs get their own assessment before we quote.",
   },
   {
     q: "Do you guarantee complete stain removal?",

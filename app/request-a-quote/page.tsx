@@ -43,9 +43,11 @@ export default async function RequestQuotePage({
                 ? {
                     serviceIds: estimateToServiceIds(input),
                     sofaSeats: input.sofaSeats,
+                    leatherSeats: input.leatherSeats,
+                    chairCount: input.chairCount,
                     mattresses: input.mattresses,
-                    carpetLength: input.carpetLength,
-                    carpetWidth: input.carpetWidth,
+                    carpetMedium: input.carpetMedium,
+                    carpetLarge: input.carpetLarge,
                     bedrooms: input.bedrooms,
                     cleaningType: input.cleaningType,
                   }

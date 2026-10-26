@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import { siteConfig } from "@/lib/siteConfig";
 import { getBrandAsset } from "@/lib/brand";
@@ -122,6 +123,7 @@ export default function RootLayout({
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd()) }}
           />
+          <SpeedInsights />
         </Providers>
       </body>
     </html>

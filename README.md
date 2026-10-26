@@ -199,5 +199,9 @@ The site deploys as a standard Next.js App Router project:
 3. Set `QUOTE_DELIVERY_ENDPOINT` in the host's environment variables when your
    email relay is ready. Until then the honest `mailto:` fallback is used.
 
+**Vercel Speed Insights** is already installed (`@vercel/speed-insights`) and
+mounted in `app/layout.tsx`. It starts collecting Core Web Vitals automatically
+once the project is deployed on Vercel — no extra configuration needed locally.
+
 Canonical URLs, sitemap and Open Graph URLs point to
 `https://www.crestlinestrategies.co.ke` (`lib/siteConfig.ts` → `siteUrl`).

@@ -142,8 +142,13 @@ export async function submitQuoteRequest(formData: FormData): Promise<FormAction
   }
 
   const sofaSeats = Number.parseInt(String(formData.get("sofaSeats") ?? "0"), 10) || 0;
-  const carpetLength = Number.parseFloat(String(formData.get("carpetLength") ?? "0")) || 0;
-  const carpetWidth = Number.parseFloat(String(formData.get("carpetWidth") ?? "0")) || 0;
+  const leatherSeats =
+    Number.parseInt(String(formData.get("leatherSeats") ?? "0"), 10) || 0;
+  const chairCount = Number.parseInt(String(formData.get("chairCount") ?? "0"), 10) || 0;
+  const carpetMedium =
+    Number.parseInt(String(formData.get("carpetMedium") ?? "0"), 10) || 0;
+  const carpetLarge =
+    Number.parseInt(String(formData.get("carpetLarge") ?? "0"), 10) || 0;
   const bedrooms = Number.parseInt(String(formData.get("bedrooms") ?? "0"), 10) || 0;
   const commercialArea =
     Number.parseFloat(String(formData.get("commercialArea") ?? "0")) || 0;
@@ -181,14 +186,18 @@ export async function submitQuoteRequest(formData: FormData): Promise<FormAction
     ...services.map((service) => `- ${service}`),
     "",
     "Scope:",
-    sofaSeats > 0 ? `Sofa seats: ${sofaSeats}` : "",
+    sofaSeats > 0 ? `Sofa seats (standard fabric): ${sofaSeats}` : "",
+    leatherSeats > 0 ? `Leather seats: ${leatherSeats}` : "",
+    chairCount > 0 ? `Dining or office chairs: ${chairCount}` : "",
     Object.keys(mattresses).length > 0
       ? `Mattresses: ${Object.entries(mattresses)
           .filter(([, count]) => count > 0)
           .map(([size, count]) => `${count} x ${size}`)
           .join(", ")}`
       : "",
-    carpetLength > 0 && carpetWidth > 0 ? `Carpet: ${carpetLength} m x ${carpetWidth} m` : "",
+    carpetMedium > 0 || carpetLarge > 0
+      ? `Rugs: ${carpetMedium} medium, ${carpetLarge} large`
+      : "",
     bedrooms > 0 ? `Bedrooms: ${bedrooms}` : "",
     propertyType ? `Property type: ${propertyType}` : "",
     commercialArea > 0 ? `Approximate commercial floor area: ${commercialArea} m²` : "",
@@ -218,9 +227,11 @@ export async function submitQuoteRequest(formData: FormData): Promise<FormAction
     services,
     scope: {
       sofaSeats,
+      leatherSeats,
+      chairCount,
       mattresses,
-      carpetLength,
-      carpetWidth,
+      carpetMedium,
+      carpetLarge,
       bedrooms,
       propertyType,
       commercialArea,

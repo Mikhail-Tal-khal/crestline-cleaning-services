@@ -50,9 +50,11 @@ type FormState = {
   locationPin: string;
   serviceIds: string[];
   sofaSeats: number;
+  leatherSeats: number;
+  chairCount: number;
   mattresses: Record<MattressSizeId, number>;
-  carpetLength: string;
-  carpetWidth: string;
+  carpetMedium: number;
+  carpetLarge: number;
   bedrooms: number;
   cleaningType: "none" | "standard" | "deep";
   commercialArea: string;
@@ -69,9 +71,11 @@ type FormState = {
 type Seed = {
   serviceIds: string[];
   sofaSeats: number;
+  leatherSeats: number;
+  chairCount: number;
   mattresses: Record<MattressSizeId, number>;
-  carpetLength: number;
-  carpetWidth: number;
+  carpetMedium: number;
+  carpetLarge: number;
   bedrooms: number;
   cleaningType: "none" | "standard" | "deep";
 };
@@ -85,9 +89,11 @@ const initialState = (seed?: Seed): FormState => ({
   locationPin: "",
   serviceIds: seed?.serviceIds ?? [],
   sofaSeats: seed?.sofaSeats ?? 0,
-  mattresses: seed?.mattresses ?? { single: 0, "4x6": 0, "5x6": 0, "6x6": 0 },
-  carpetLength: seed?.carpetLength ? String(seed.carpetLength) : "",
-  carpetWidth: seed?.carpetWidth ? String(seed.carpetWidth) : "",
+  leatherSeats: seed?.leatherSeats ?? 0,
+  chairCount: seed?.chairCount ?? 0,
+  mattresses: seed?.mattresses ?? { "3x6": 0, "4x6": 0, "5x6": 0, "6x6": 0 },
+  carpetMedium: seed?.carpetMedium ?? 0,
+  carpetLarge: seed?.carpetLarge ?? 0,
   bedrooms: seed?.bedrooms ?? 0,
   cleaningType: seed?.cleaningType ?? "none",
   commercialArea: "",
@@ -183,8 +189,8 @@ export default function QuoteForm({ seed }: { seed?: Seed }) {
           ? undefined
           : "Choose at least one service so we know where to start.";
       case "sofaSeats":
-        return has("sofa") && form.sofaSeats < 1
-          ? "How many seats should we clean?"
+        return has("sofa") && form.sofaSeats + form.leatherSeats + form.chairCount < 1
+          ? "Add at least one seat or chair."
           : undefined;
       case "mattresses":
         return has("mattress") && mattressSizes.every((size) => form.mattresses[size.id] < 1)
@@ -192,13 +198,9 @@ export default function QuoteForm({ seed }: { seed?: Seed }) {
           : undefined;
       case "carpet": {
         if (!has("carpet")) return undefined;
-        const length = Number.parseFloat(form.carpetLength);
-        const width = Number.parseFloat(form.carpetWidth);
-        if (!Number.isFinite(length) || length <= 0)
-          return "Add the carpet's length in metres.";
-        if (!Number.isFinite(width) || width <= 0)
-          return "Add the carpet's width in metres.";
-        return undefined;
+        return form.carpetMedium + form.carpetLarge > 0
+          ? undefined
+          : "Add at least one rug size.";
       }
       case "cleaningType":
         return wantsHouse && form.cleaningType === "none"
@@ -315,9 +317,11 @@ export default function QuoteForm({ seed }: { seed?: Seed }) {
         .join(", ")
     );
     fd.set("sofaSeats", String(form.sofaSeats));
+    fd.set("leatherSeats", String(form.leatherSeats));
+    fd.set("chairCount", String(form.chairCount));
     fd.set("mattresses", JSON.stringify(form.mattresses));
-    fd.set("carpetLength", form.carpetLength || "0");
-    fd.set("carpetWidth", form.carpetWidth || "0");
+    fd.set("carpetMedium", String(form.carpetMedium));
+    fd.set("carpetLarge", String(form.carpetLarge));
     fd.set("bedrooms", String(form.bedrooms));
     fd.set("cleaningType", form.cleaningType);
     fd.set("commercialArea", form.commercialArea || "0");
@@ -582,17 +586,36 @@ export default function QuoteForm({ seed }: { seed?: Seed }) {
                 <div className="mt-6 space-y-5">
                   {has("sofa") && (
                     <div className="rounded-[22px] bg-white p-5 shadow-card dark:bg-white/[0.06]">
-                      <Stepper
-                        label="Sofa seats"
-                        value={form.sofaSeats}
-                        onChange={(value) => {
-                          update("sofaSeats", value);
-                          if (errors.sofaSeats) runFieldValidation("sofaSeats");
-                        }}
-                        min={1}
-                        max={30}
-                        hint="Standard seat equivalents"
-                      />
+                      <div className="space-y-5">
+                        <Stepper
+                          label="Standard fabric sofa — seats"
+                          value={form.sofaSeats}
+                          onChange={(value) => {
+                            update("sofaSeats", value);
+                            if (errors.sofaSeats) runFieldValidation("sofaSeats");
+                          }}
+                          max={30}
+                          hint="KSh 500 per seat"
+                        />
+                        <div className="border-t-[0.5px] border-navy/[0.06] pt-5 dark:border-white/[0.08]">
+                          <Stepper
+                            label="Leather sofa or couch set — seats"
+                            value={form.leatherSeats}
+                            onChange={(value) => update("leatherSeats", value)}
+                            max={30}
+                            hint="KSh 550 per seat"
+                          />
+                        </div>
+                        <div className="border-t-[0.5px] border-navy/[0.06] pt-5 dark:border-white/[0.08]">
+                          <Stepper
+                            label="Dining or office chairs"
+                            value={form.chairCount}
+                            onChange={(value) => update("chairCount", value)}
+                            max={40}
+                            hint="KSh 450 per chair"
+                          />
+                        </div>
+                      </div>
                       {errors.sofaSeats && (
                         <p role="alert" className="field-error">
                           <AlertIcon className="mt-0.5 h-4 w-4 shrink-0" />
@@ -629,25 +652,27 @@ export default function QuoteForm({ seed }: { seed?: Seed }) {
                   {has("carpet") && (
                     <div className="rounded-[22px] bg-white p-5 shadow-card dark:bg-white/[0.06]">
                       <div className="grid gap-5 sm:grid-cols-2">
-                        <TextField
-                          label="Carpet length (m)"
-                          name="carpetLength"
-                          inputMode="decimal"
-                          value={form.carpetLength}
-                          onChange={(value) => update("carpetLength", value)}
-                          onBlur={() => runFieldValidation("carpet")}
-                          error={errors.carpet}
+                        <Stepper
+                          label="Medium rugs"
+                          value={form.carpetMedium}
+                          onChange={(value) => update("carpetMedium", value)}
+                          max={20}
+                          hint="KSh 1,000 each"
                         />
-                        <TextField
-                          label="Carpet width (m)"
-                          name="carpetWidth"
-                          inputMode="decimal"
-                          value={form.carpetWidth}
-                          onChange={(value) => update("carpetWidth", value)}
-                          onBlur={() => runFieldValidation("carpet")}
-                          error={errors.carpet}
+                        <Stepper
+                          label="Large rugs"
+                          value={form.carpetLarge}
+                          onChange={(value) => update("carpetLarge", value)}
+                          max={20}
+                          hint="KSh 1,500 each"
                         />
                       </div>
+                      {errors.carpet && (
+                        <p role="alert" className="field-error">
+                          <AlertIcon className="mt-0.5 h-4 w-4 shrink-0" />
+                          <span>{errors.carpet}</span>
+                        </p>
+                      )}
                     </div>
                   )}
 
@@ -1086,9 +1111,11 @@ function ReviewSummary({
       title: "Scope",
       lines: [
         form.sofaSeats > 0 ? `Sofa seats: ${form.sofaSeats}` : "",
+        form.leatherSeats > 0 ? `Leather seats: ${form.leatherSeats}` : "",
+        form.chairCount > 0 ? `Dining or office chairs: ${form.chairCount}` : "",
         mattressSummary ? `Mattresses: ${mattressSummary}` : "",
-        form.carpetLength && form.carpetWidth
-          ? `Carpet: ${form.carpetLength} m × ${form.carpetWidth} m`
+        form.carpetMedium > 0 || form.carpetLarge > 0
+          ? `Rugs: ${form.carpetMedium} medium, ${form.carpetLarge} large`
           : "",
         form.bedrooms > 0 ? `Bedrooms: ${form.bedrooms}` : "",
         form.cleaningType !== "none"

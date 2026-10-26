@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
-  carpetPricing,
+  carpetPricingNote,
+  carpetSizes,
   fabricPackages,
   houseCleaningTiers,
   mattressPricingNote,
@@ -10,8 +11,10 @@ import {
   packageRulesNote,
   pricingDisclaimer,
   propertyCommercialPricing,
+  seatingNotes,
+  seatingPricing,
   serviceConditions,
-  sofaPricing,
+  sofaSeatExamples,
   totalHomeCare,
 } from "@/lib/pricing";
 import { ksh } from "@/lib/format";
@@ -19,7 +22,7 @@ import { cn } from "@/lib/cn";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { InsetGroup, InsetRow } from "@/components/ui/inset-list";
 import Reveal from "@/components/reveal";
-import { CheckIcon, InfoIcon, LayersIcon } from "@/components/icons";
+import { CheckIcon, LayersIcon } from "@/components/icons";
 
 type Segment = "fabric" | "house" | "property";
 
@@ -101,6 +104,19 @@ function PanelHeading({ title, note }: { title: string; note?: string }) {
       <h3 className="font-sans text-[19px] font-bold text-charcoal dark:text-white">{title}</h3>
       {note && <p className="mt-1 text-[14px] leading-6 text-slate-600 dark:text-silver/90">{note}</p>}
     </div>
+  );
+}
+
+function Notes({ items }: { items: readonly string[] }) {
+  return (
+    <ul className="space-y-1.5">
+      {items.map((item) => (
+        <li key={item} className="flex items-start gap-2.5 text-[13.5px] leading-6 text-slate-600 dark:text-silver/90">
+          <CheckIcon className="mt-1 h-4 w-4 shrink-0 text-royal dark:text-bright" />
+          {item}
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -229,17 +245,28 @@ export default function PackagesBrowser() {
           <div hidden={segment !== "fabric"} className="space-y-10 pt-10">
             <div id="sofa" className="scroll-mt-24 space-y-4">
               <PanelHeading
-                title="Sofa cleaning"
-                note={`KSh ${sofaPricing.pricePerSeat} per standard seat equivalent, with a minimum standalone extraction visit of ${ksh(sofaPricing.minimumExtractionVisit)}. Multiple sofas are counted together; shape, construction and condition can change the final seat-equivalent assessment.`}
+                title="Seating"
+                note="Priced per seat. Multiple sofas and chairs are counted together in one visit."
               />
               <PriceTable
-                caption="Sofa cleaning prices by seat count"
-                columns={[{ label: "Seats" }, { label: "Guide price", align: "right" }]}
-                rows={sofaPricing.seatExamples.map((example) => ({
+                caption="Seating cleaning prices per seat"
+                columns={[{ label: "Type" }, { label: "Per seat", align: "right" }]}
+                rows={[
+                  { cells: [seatingPricing.standard.label, ksh(seatingPricing.standard.pricePerSeat)] },
+                  { cells: [seatingPricing.leather.label, ksh(seatingPricing.leather.pricePerSeat)] },
+                  { cells: [seatingPricing.chair.label, ksh(seatingPricing.chair.pricePerSeat)] },
+                ]}
+              />
+              <PriceTable
+                caption="Standard fabric sofa example prices by seat count"
+                columns={[{ label: "Standard sofa seats" }, { label: "Guide price", align: "right" }]}
+                rows={sofaSeatExamples.map((example) => ({
                   cells: [`${example.seats} seats`, ksh(example.price)],
                 }))}
               />
+              <Notes items={seatingNotes} />
             </div>
+
             <div id="mattress" className="scroll-mt-24 space-y-4">
               <PanelHeading title="Mattress cleaning" note={mattressPricingNote} />
               <PriceTable
@@ -248,16 +275,14 @@ export default function PackagesBrowser() {
                 rows={mattressSizes.map((size) => ({ cells: [size.label, ksh(size.price)] }))}
               />
             </div>
+
             <div id="carpet" className="scroll-mt-24 space-y-4">
-              <PanelHeading
-                title="Carpet and rug cleaning"
-                note={`Standard fabric at ${ksh(carpetPricing.pricePerSquareMetre)} per m², with a minimum carpet charge of ${ksh(carpetPricing.minimumCharge)}. Specialty rugs and delicate fibres are assessed individually.`}
-              />
+              <PanelHeading title="Carpet and rug cleaning" note={carpetPricingNote} />
               <PriceTable
-                caption="Carpet cleaning example prices by area"
-                columns={[{ label: "Carpet area" }, { label: "Guide price", align: "right" }]}
-                rows={carpetPricing.examples.map((example) => ({
-                  cells: [`${example.area} m²`, ksh(example.price)],
+                caption="Carpet and rug cleaning prices by size"
+                columns={[{ label: "Rug size" }, { label: "Guide price", align: "right" }]}
+                rows={carpetSizes.map((size) => ({
+                  cells: [`${size.label} — ${size.detail}`, ksh(size.price)],
                 }))}
               />
             </div>

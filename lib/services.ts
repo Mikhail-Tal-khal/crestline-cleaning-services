@@ -51,7 +51,7 @@ export const services: Service[] = [
       "Delicate fabrics, leather, suede, oversized pieces or unusual construction? Send us photos or we'll take a look in person before we confirm the method.",
       "Some stains, odours and wear are there to stay. If a mark is permanent, we'll say so honestly rather than promise what we can't do.",
     ],
-    pricingNote: "From KSh 600 per standard seat equivalent",
+    pricingNote: "From KSh 500 per standard seat · leather KSh 550 · chairs KSh 450",
     featured: true,
     image: "/images/sofa-cleaning.jpg",
     imageAlt:
@@ -75,7 +75,7 @@ export const services: Service[] = [
     notes: [
       "Specialty rugs and delicate fibres get a proper individual assessment before we commit to any method.",
     ],
-    pricingNote: "KSh 250 per m² for standard fabric (minimum KSh 1,500)",
+    pricingNote: "Medium rugs KSh 1,000 · large rugs KSh 1,500",
     featured: true,
     image: "/images/carpet-cleaning.jpg",
     imageAlt:
@@ -99,7 +99,7 @@ export const services: Service[] = [
     notes: [
       "Standard prices cover one face plus the accessible edges. Want the other face done too? We'll quote it separately.",
     ],
-    pricingNote: "From KSh 1,500 for a single mattress (one face plus accessible edges)",
+    pricingNote: "From KSh 1,700 for a 3 × 6 ft mattress (one face plus edges)",
     featured: true,
     image: "/images/mattress-cleaning.jpg",
     imageAlt:
