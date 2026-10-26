@@ -36,6 +36,9 @@ export const metadata: Metadata = {
     "post-construction cleaning Mombasa",
     "professional cleaners in Mombasa",
   ],
+  icons: {
+    icon: [{ url: "/icon.png", type: "image/png" }],
+  },
   openGraph: {
     type: "website",
     siteName: siteConfig.name,
